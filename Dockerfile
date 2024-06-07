@@ -1,6 +1,6 @@
 FROM node:14
 
-WORKDIR /var/lib/app
+WORKDIR /app
 
 COPY package*.json ./
 
@@ -9,8 +9,9 @@ RUN npm install
 COPY . .
 
 # Expose the port the app runs on
-EXPOSE 8080
+EXPOSE 3000
 
 ENTRYPOINT ["npm"]
 # Define the command to run the app
 CMD ["start"]
+

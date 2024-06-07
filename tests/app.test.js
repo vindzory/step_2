@@ -1,19 +1,20 @@
 const request = require('supertest');
-//const server = require('../index.js');
-//const app = request(server);
+const server = require('../index.js');
 
 describe('GET /', () => {
-  var server;
+  var app;
+  
   beforeEach(function () {
-    server = require('../index');
+    app = server;
   });
+  
   afterEach(function () {
-    server.close();
+    app.close();
   });
+  
   it('responds to /', function testSlash(done) {
-    request(server)
+    request(app)
       .get('/')
       .expect(200, done);
   });
 });
-

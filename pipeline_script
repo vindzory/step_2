@@ -1,0 +1,46 @@
+pipeline {
+    agent any
+
+    environment {
+        DOCKER_CREDENTIALS = '497d516a-8404-4952-be4f-87f9e413fe1c'
+    }
+
+    stages {
+        stage('Pull Code') {
+            steps {
+                git branch: 'main', url: 'https://github.com/vindzory/step_2.git'
+            }
+        }
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                        def result = sh(script: "docker build -t vindzory/step_2docker .", returnStatus: true)
+                        if (result != 0) {
+                            error "Failed to build Docker image"
+                        }
+                    }
+                }
+            }
+        }
+        stage('Run Tests') {
+            steps {
+                sh 'docker run vindzory/step_2docker npm test'
+            }
+        }
+        stage('Push to Docker Hub') {
+            steps {
+                script {
+                    withCredentials([usernamePassword(credentialsId: DOCKER_CREDENTIALS, usernameVariable: 'DOCKER_USERNAME', passwordVariable: 'DOCKER_PASSWORD')]) {
+                        sh "docker login -u $DOCKER_USERNAME -p $DOCKER_PASSWORD"
+                        def result = sh(script: "docker push vindzory/step_2docker", returnStatus: true)
+                        if (result != 0) {
+                            error "Failed to push Docker image to Docker Hub"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

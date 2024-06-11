@@ -14,7 +14,7 @@ EXPOSE 8000
 # Run tests
 RUN npm test
 
-//ENTRYPOINT ["npm"]
+#ENTRYPOINT ["npm"]
 
 # Define the command to run the app
 CMD ["npm","start"]
